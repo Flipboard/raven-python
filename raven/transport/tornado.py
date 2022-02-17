@@ -37,9 +37,8 @@ class TornadoHTTPTransport(AsyncTransport, HTTPTransport):
         kwargs["ca_certs"] = self.ca_certs
 
         # only use async if ioloop is running, otherwise it will never send
-        if ioloop.IOLoop.initialized():
+        if ioloop.IOLoop.current(instance=False):
             client = AsyncHTTPClient()
-            kwargs['callback'] = None
 
             future = client.fetch(url, **kwargs)
             ioloop.IOLoop.current().add_future(future, partial(self.handler, success_cb, failure_cb))
